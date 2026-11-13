@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Password Strength Checker</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #101827;
+  font-family: Arial, sans-serif;
+  color: white;
+}
+.container {
+  background: #1e293b;
+  padding: 35px;
+  width: min(90%, 430px);
+  border-radius: 18px;
+  box-shadow: 0 15px 40px #0005;
+}
+h1 { text-align: center; font-size: 25px; }
+p { color: #94a3b8; text-align: center; }
+input {
+  width: 100%;
+  padding: 15px;
+  margin-top: 20px;
+  border: 1px solid #475569;
+  border-radius: 9px;
+  background: #0f172a;
+  color: white;
+  font-size: 16px;
+}
+.meter {
+  height: 9px;
+  background: #475569;
+  border-radius: 10px;
+  margin: 18px 0;
+  overflow: hidden;
+}
+#bar { height: 100%; width: 0; transition: .3s; }
+#result { font-weight: bold; text-align: center; }
+ul { padding-left: 20px; line-height: 2.1; color: #94a3b8; }
+.valid { color: #4ade80; }
+button {
+  width: 100%;
+  padding: 12px;
+  background: #6366f1;
+  border: none;
+  color: white;
+  border-radius: 9px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🔐 Password Checker</h1>
+  <p>Check how strong your password is.</p>
+
+  <input type="password" id="password"
+    placeholder="Enter your password"
+    oninput="checkPassword()">
+
+  <div class="meter"><div id="bar"></div></div>
+  <div id="result">Enter a password</div>
+
+  <h3>Security Checklist</h3>
+  <ul>
+    <li id="length">At least 8 characters</li>
+    <li id="upper">Uppercase letter (A-Z)</li>
+    <li id="lower">Lowercase letter (a-z)</li>
+    <li id="number">Number (0-9)</li>
+    <li id="special">Special character (!@#$)</li>
+  </ul>
+
+  <button onclick="togglePassword()">Show / Hide Password</button>
+</div>
+
+<script>
+function checkPassword() {
+  const p = document.getElementById("password").value;
+
+  const checks = {
+    length: p.length >= 8,
+    upper: /[A-Z]/.test(p),
+    lower: /[a-z]/.test(p),
+    number: /[0-9]/.test(p),
+    special: /[^A-Za-z0-9]/.test(p)
+  };
+
+  let score = 0;
+
+  for (const [id, passed] of Object.entries(checks)) {
+    document.getElementById(id).className =
+      passed ? "valid" : "";
+    if (passed) score++;
+  }
+
+  const bar = document.getElementById("bar");
+  const result = document.getElementById("result");
+
+  bar.style.width = (score * 20) + "%";
+
+  const levels = [
+    ["", "#64748b"],
+    ["Very Weak", "#ef4444"],
+    ["Weak", "#f97316"],
+    ["Fair", "#eab308"],
+    ["Strong", "#22c55e"],
+    ["Very Strong", "#10b981"]
+  ];
+
+  result.textContent = p ? levels[score][0] : "Enter a password";
+  result.style.color = p ? levels[score][1] : "white";
+  bar.style.background = levels[score][1];
+}
+
+function togglePassword() {
+  const input = document.getElementById("password");
+  input.type = input.type === "password" ? "text" : "password";
+}
+</script>
+</body>
+</html>
